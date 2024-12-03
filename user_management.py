@@ -2,6 +2,8 @@ import json
 import random
 import re
 import os
+from datetime import datetime
+
 
 userData = ["Jan", "123123123", "321321321", "regon"]
 
@@ -28,7 +30,10 @@ def add_user(user_data):
     pesel = validate_pesel(user_data[2])
     regon = validate_regon(user_data[3])
     index = 1
-    dataToSave = {"userIndex":index,"userName": userName, "NIP": nip, "PESEL": pesel, "REGON":regon}
+    dataToSave = {"userIndex":index,"userName": userName, "NIP": nip, "PESEL": pesel, "REGON":regon, "password": generate_password(), "status": True}
+    save_user_to_file(dataToSave)
+    
+def save_user_to_file(dataToSave):
     path = './data/users.json'
     isExist = os.path.exists(path) 
     if(isExist): 
@@ -36,7 +41,7 @@ def add_user(user_data):
             data = json.load(out_file)
             data = list(data)
             data.append(dataToSave)
-            data[len(data)-1]["userIndex"] = len(data)
+            data[len(data)-1]["userIndex"] = data[len(data)-2]["userIndex"]+1
         with open("./data/users.json", mode="w+", encoding='utf-8') as out_file:
             json.dump(data, out_file)
     else:
