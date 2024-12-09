@@ -8,7 +8,24 @@ from datetime import datetime
 userData = ["Jan", "123123123", "321321321", "regon"]
 
 def edit_user(user_id, updated_data):
-    return 0
+    path = './data/users.json'
+    isExist = os.path.exists(path) 
+    if(isExist): 
+        with open("./data/users.json", mode="r", encoding='utf-8') as out_file:
+            data = json.load(out_file)
+            data = list(data)
+            userName = updated_data[0]
+            nip = validate_nip(updated_data[1])
+            pesel = validate_pesel(updated_data[2])
+            regon = validate_regon(updated_data[3])
+            index = 1
+            dataToSave = {"userIndex":index,"userName": userName, "NIP": nip, "PESEL": pesel, "REGON":regon, "password": generate_password(), "status": True}
+            data[user_id-1] = dataToSave
+        with open("./data/users.json", mode="w+", encoding='utf-8') as out_file:
+            json.dump(data, out_file)
+        print(f"Succesfully edited user data at {user_id}")
+    else:
+        print(f"File not found at {path}, there is no user data to edit.")
 def remove_user(user_id):
     return 0
 def load_users():
