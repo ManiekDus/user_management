@@ -40,7 +40,22 @@ def remove_user(user_id):
     else:
         print(f"File not found at {path}, there is no user data to edit.")
 def load_users():
-    return 0
+    path = './data/users.json'
+    isExist = os.path.exists(path) 
+    if(isExist): 
+        with open("./data/users.json", mode="r", encoding='utf-8') as out_file:
+            data = json.load(out_file)
+        for i in range(len(data)):
+            if(data[i]["status"]):
+                print(f"{data[i]["userIndex"]}) User: {data[i]["userName"]} with data:")
+                print(f"NIP: {data[i]["NIP"]}")
+                print(f"PESEL: {data[i]["PESEL"]}")
+                print(f"REGON: {data[i]["REGON"]}")
+            else:
+                print(f"{data[i]["userIndex"]} User has been deleted")
+        return data
+    else:
+        print(f"File not found at {path}, there is no user data to load.")
 def validate_nip(nip):
     return nip
 def validate_pesel(pesel):
