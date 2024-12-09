@@ -11,18 +11,29 @@ def edit_user(user_id, updated_data):
     path = './data/users.json'
     isExist = os.path.exists(path) 
     if(isExist): 
+        canSave = True
         with open("./data/users.json", mode="r", encoding='utf-8') as out_file:
             data = json.load(out_file)
             data = list(data)
             userName = updated_data[0]
-            nip = validate_nip(updated_data[1])
-            pesel = validate_pesel(updated_data[2])
-            regon = validate_regon(updated_data[3])
-            dataToSave = {"userIndex":user_id,"userName": userName, "NIP": nip, "PESEL": pesel, "REGON":regon, "password": generate_password(), "status": True}
-            data[user_id-1] = dataToSave
+            nip = updated_data[1]
+            pesel = updated_data[2]
+            regon = updated_data[3]
+            if(validate_nip(nip) == False):
+                print("NIP number failed validation, please make sure the provided NIP is correct.")
+                canSave = False
+            if(validate_pesel(pesel) == False):
+                print("PESEL number failed validation, please make sure the provided PESEL is correct.")
+                canSave = False
+            if(validate_regon(regon) == False):
+                print("REGON number failed validation, please make sure the provided REGON is correct.")
+                canSave = False       
+            if(canSave):
+                dataToSave = {"userIndex":user_id,"userName": userName, "NIP": nip, "PESEL": pesel, "REGON":regon, "password": generate_password(), "status": True}
+                data[user_id-1] = dataToSave
+                print(f"Succesfully edited user data at {user_id}")
         with open("./data/users.json", mode="w+", encoding='utf-8') as out_file:
-            json.dump(data, out_file)
-        print(f"Succesfully edited user data at {user_id}")
+            json.dump(data, out_file)    
     else:
         print(f"File not found at {path}, there is no user data to edit.")
 def remove_user(user_id):
@@ -39,14 +50,14 @@ def remove_user(user_id):
         print(f"Succesfully deleted user data at ID: {user_id}")
     else:
         print(f"File not found at {path}, there is no user data to edit.")
-def load_users():
+def load_users(showAllData = False):
     path = './data/users.json'
     isExist = os.path.exists(path) 
     if(isExist): 
         with open("./data/users.json", mode="r", encoding='utf-8') as out_file:
             data = json.load(out_file)
         for i in range(len(data)):
-            if(data[i]["status"]):
+            if(data[i]["status"] or showAllData):
                 print(f"{data[i]["userIndex"]}) User: {data[i]["userName"]} with data:")
                 print(f"NIP: {data[i]["NIP"]}")
                 print(f"PESEL: {data[i]["PESEL"]}")
@@ -56,8 +67,19 @@ def load_users():
         return data
     else:
         print(f"File not found at {path}, there is no user data to load.")
-def validate_nip(nip):
-    return nip
+def validate_nip(nip:str):
+    if(len(nip) == 10):
+        suma = 0
+        weightNIP = "657234567"
+        for i in range(9):
+            suma = int(weightNIP[i]) * int(nip[i]) + suma
+        lastDigit = suma%11
+        if(lastDigit == nip[9]):
+            return True
+        else:
+            return False
+    else:
+        return False
 def validate_pesel(pesel):
     return pesel
 def validate_regon(regon):
@@ -68,13 +90,24 @@ def validate_password(password):
     return password
 
 def add_user(user_data):
+    canSave = True
     userName = user_data[0]
-    nip = validate_nip(user_data[1])
-    pesel = validate_pesel(user_data[2])
-    regon = validate_regon(user_data[3])
-    index = 1
-    dataToSave = {"userIndex":index,"userName": userName, "NIP": nip, "PESEL": pesel, "REGON":regon, "password": generate_password(), "status": True}
-    save_user_to_file(dataToSave)
+    nip = user_data[1]
+    pesel = user_data[2]
+    regon = user_data[3]
+    if(validate_nip(nip) == False):
+            print("NIP number failed validation, please make sure the provided NIP is correct.")
+            canSave = False
+    if(validate_pesel(pesel) == False):
+            print("PESEL number failed validation, please make sure the provided PESEL is correct.")
+            canSave = False
+    if(validate_regon(regon) == False):
+            print("REGON number failed validation, please make sure the provided REGON is correct.")
+            canSave = False    
+    if(canSave):
+            index = 1
+            dataToSave = {"userIndex":index,"userName": userName, "NIP": nip, "PESEL": pesel, "REGON":regon, "password": generate_password(), "status": True}
+            save_user_to_file(dataToSave)
     
 def save_user_to_file(dataToSave):
     path = './data/users.json'
