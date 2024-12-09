@@ -2,10 +2,8 @@ import json
 import random
 import re
 import os
+import string
 from datetime import datetime
-
-
-userData = ["Jan", "123123123", "321321321", "regon"]
 
 def edit_user(user_id, updated_data):
     path = './data/users.json'
@@ -15,25 +13,29 @@ def edit_user(user_id, updated_data):
         with open("./data/users.json", mode="r", encoding='utf-8') as out_file:
             data = json.load(out_file)
             data = list(data)
-            userName = updated_data[0]
-            nip = updated_data[1]
-            pesel = updated_data[2]
-            regon = updated_data[3]
-            if(validate_nip(nip) == False):
-                print("NIP number failed validation, please make sure the provided NIP is correct.")
-                canSave = False
-            if(validate_pesel(pesel) == False):
-                print("PESEL number failed validation, please make sure the provided PESEL is correct.")
-                canSave = False
-            if(validate_regon(regon) == False):
-                print("REGON number failed validation, please make sure the provided REGON is correct.")
-                canSave = False       
-            if(canSave):
-                dataToSave = {"userIndex":user_id,"userName": userName, "NIP": nip, "PESEL": pesel, "REGON":regon, "password": generate_password(), "status": True}
-                data[user_id-1] = dataToSave
-                print(f"Succesfully edited user data at {user_id}")
-        with open("./data/users.json", mode="w+", encoding='utf-8') as out_file:
-            json.dump(data, out_file)    
+            if(user_id <= len(data)):
+                userName = updated_data[0]
+                nip = updated_data[1]
+                pesel = updated_data[2]
+                regon = updated_data[3]
+                if(validate_nip(nip) == False):
+                    print("NIP number failed validation, please make sure the provided NIP is correct.")
+                    canSave = False
+                if(validate_pesel(pesel) == False):
+                    print("PESEL number failed validation, please make sure the provided PESEL is correct.")
+                    canSave = False
+                if(validate_regon(regon) == False):
+                    print("REGON number failed validation, please make sure the provided REGON is correct.")
+                    canSave = False       
+                if(canSave):
+                    dataToSave = {"userIndex":user_id,"userName": userName, "NIP": nip, "PESEL": pesel, "REGON":regon, "password": generate_password(), "status": True}
+                    data[user_id-1] = dataToSave
+                    print(f"Succesfully edited user data at {user_id}")
+                with open("./data/users.json", mode="w+", encoding='utf-8') as out_file:
+                    json.dump(data, out_file)
+            else:
+                print("User index out of range")
+               
     else:
         print(f"File not found at {path}, there is no user data to edit.")
 def remove_user(user_id):
@@ -43,11 +45,14 @@ def remove_user(user_id):
         with open("./data/users.json", mode="r", encoding='utf-8') as out_file:
             data = json.load(out_file)
             data = list(data)
-            dataToSave = {"userIndex":user_id,"userName": "Redacted", "NIP": data[user_id-1]["NIP"], "PESEL": data[user_id-1]["PESEL"], "REGON":data[user_id-1]["REGON"], "password": 'None', "status": False}
-            data[user_id-1] = dataToSave
-        with open("./data/users.json", mode="w+", encoding='utf-8') as out_file:
-            json.dump(data, out_file)
-        print(f"Succesfully deleted user data at ID: {user_id}")
+            if(user_id <= len(data)):
+                dataToSave = {"userIndex":user_id,"userName": "Redacted", "NIP": data[user_id-1]["NIP"], "PESEL": data[user_id-1]["PESEL"], "REGON":data[user_id-1]["REGON"], "password": 'None', "status": False}
+                data[user_id-1] = dataToSave
+                with open("./data/users.json", mode="w+", encoding='utf-8') as out_file:
+                    json.dump(data, out_file)
+                print(f"Succesfully deleted user data at ID: {user_id}")
+            else:
+                print("User index out of range")
     else:
         print(f"File not found at {path}, there is no user data to edit.")
 def load_users(showAllData = False):
@@ -123,16 +128,77 @@ def validate_regon(regon) -> bool:
         print("b")
         return False
 def generate_password():
-    return 0
-def validate_password(password):
-    return password
+    passwordLenght = 12
+    numberOfInts = random.randrange(1, 9, 1)
+    if(9-numberOfInts <= 3):
+        numberOfLowerCase = 1
+        numberOfUpperCase = 1
+    else:
+        numberOfLowerCase = random.randrange(1, 10-numberOfInts, 1)
+    if(9-numberOfInts-numberOfLowerCase <= 2):
+        numberOfUpperCase = 1
+    else:
+        numberOfUpperCase = random.randrange(1, 11-numberOfInts-numberOfLowerCase, 1)
+    numberOfSpecialCharacters = 12-numberOfInts-numberOfLowerCase-numberOfUpperCase
+    password = [None]*12
+    digits = string.digits
+    lowerCased = string.ascii_lowercase
+    upperCased = string.ascii_uppercase
+    specialCharacters = string.punctuation
+    for i in range(0, numberOfInts):
+        while True:
+            j = (random.randrange(0, 12, 1))
+            if(password[j] == None):
+                break
+        l = (random.randrange(0, len(digits), 1))
+        password[j] = digits[l]
+    for i in range(0, numberOfLowerCase):
+        while True:
+            j = (random.randrange(0, 12, 1))
+            if(password[j] == None):
+                break
+        l = (random.randrange(0, len(lowerCased), 1))
+        password[j] = lowerCased[l]
+    for i in range(0, numberOfUpperCase):
+        while True:
+            j = (random.randrange(0, 12, 1))
+            if(password[j] == None):
+                break
+        l = (random.randrange(0, len(upperCased), 1))
+        password[j] = upperCased[l]
+    for i in range(0, numberOfSpecialCharacters):
+        while True:
+            j = (random.randrange(0, 12, 1))
+            if(password[j] == None):
+                break
+        l = (random.randrange(0, len(specialCharacters), 1))
+        password[j] = specialCharacters[l]
+    readyPassword = ""
+    readyPassword = readyPassword.join(password)
+    return readyPassword
+    
 
-def add_user(user_data):
+def validate_password(password:str):
+    if(len(password) < 12):
+        return False
+    if(re.search(string.digits, password) == False):
+        return False
+    if(re.search(string.ascii_lowercase, password) == False):
+        return False
+    if(re.search(string.ascii_uppercase, password) == False):
+        return False
+    if(re.search(string.punctuation, password) == False):
+        return False
+    return True
+
+def add_user(user_data, customPassword = ""):
     canSave = True
     userName = user_data[0]
     nip = user_data[1]
     pesel = user_data[2]
     regon = user_data[3]
+    if(password == ""):
+        password = generate_password()
     if(validate_nip(nip) == False):
             print("NIP number failed validation, please make sure the provided NIP is correct.")
             canSave = False
@@ -141,10 +207,14 @@ def add_user(user_data):
             canSave = False
     if(validate_regon(regon) == False):
             print("REGON number failed validation, please make sure the provided REGON is correct.")
-            canSave = False    
+            canSave = False
+    if(validate_password(regon) == False):
+        print("Password failed validation, please make sure the provided Password is correct.")
+        canSave = False    
     if(canSave):
             index = 1
             dataToSave = {"userIndex":index,"userName": userName, "NIP": nip, "PESEL": pesel, "REGON":regon, "password": generate_password(), "status": True}
+            print(dataToSave["password"])
             save_user_to_file(dataToSave)
     
 def save_user_to_file(dataToSave):
@@ -167,4 +237,3 @@ def save_user_to_file(dataToSave):
         with open("./data/users.json", mode="w+", encoding='utf-8') as out_file:
             json.dump(data, out_file)
         print("User entry")
-add_user(userData)
