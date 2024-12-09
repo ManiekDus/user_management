@@ -67,20 +67,23 @@ def load_users(showAllData = False):
         return data
     else:
         print(f"File not found at {path}, there is no user data to load.")
-def validate_nip(nip:str):
+def validate_nip(nip:str) -> bool:
     if(len(nip) == 10):
         suma = 0
         weightNIP = "657234567"
         for i in range(9):
             suma = int(weightNIP[i]) * int(nip[i]) + suma
-        lastDigit = suma%11
-        if(lastDigit == nip[9]):
+        if(suma%11 == 10):
+            lastDigit = 0
+        else:
+            lastDigit = suma%11
+        if(lastDigit == int(nip[9])):
             return True
         else:
             return False
     else:
         return False
-def validate_pesel(pesel):
+def validate_pesel(pesel) -> bool:
     if(len(pesel) == 11):
         suma = 0
         weightPESEL = "1379137913"
@@ -92,7 +95,7 @@ def validate_pesel(pesel):
         if(suma > 10 and suma < 100):
                 suma = suma%10
         lastDigit = 10 - suma
-        if(lastDigit == pesel[10]):
+        if(lastDigit == int(pesel[10])):
             if(int(pesel[2:4]) > 0 and int(pesel[2:4]) < 13 or int(pesel[2:4]) > 20 and int(pesel[2:4]) < 33 or int(pesel[2:4]) > 40 and int(pesel[2:4]) < 53 or int(pesel[2:4]) > 60 and int(pesel[2:4]) < 73 or int(pesel[2:4]) > 80 and int(pesel[2:4]) < 93):
                 return True
             else:
@@ -101,8 +104,24 @@ def validate_pesel(pesel):
             return False
     else:
         return False
-def validate_regon(regon):
-    return regon
+def validate_regon(regon) -> bool:
+    if(len(regon) == 9):
+        suma = 0
+        weightREGON = "89234567"
+        for i in range(8):
+            suma = int(weightREGON[i]) * int(regon[i]) + suma
+        if(suma%11 == 10):
+            lastDigit = 0
+        else:
+            lastDigit = suma%11
+        if(lastDigit == int(regon[8])):
+            return True
+        else:
+            print("s")
+            return False
+    else:
+        print("b")
+        return False
 def generate_password():
     return 0
 def validate_password(password):
@@ -139,6 +158,7 @@ def save_user_to_file(dataToSave):
             data[len(data)-1]["userIndex"] = data[len(data)-2]["userIndex"]+1
         with open("./data/users.json", mode="w+", encoding='utf-8') as out_file:
             json.dump(data, out_file)
+        print("User entry")
     else:
         data = []
         data.append(dataToSave)
