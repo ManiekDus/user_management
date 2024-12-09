@@ -81,7 +81,26 @@ def validate_nip(nip:str):
     else:
         return False
 def validate_pesel(pesel):
-    return pesel
+    if(len(pesel) == 11):
+        suma = 0
+        weightPESEL = "1379137913"
+        for i in range(10):
+            if(int(weightPESEL[i]) * int(pesel[i]) > 10 and int(weightPESEL[i]) * int(pesel[i]) < 100):
+                suma = (int(weightPESEL[i]) * int(pesel[i]))%10 + suma
+            else:
+                suma = int(weightPESEL[i]) * int(pesel[i]) + suma
+        if(suma > 10 and suma < 100):
+                suma = suma%10
+        lastDigit = 10 - suma
+        if(lastDigit == pesel[10]):
+            if(int(pesel[2:4]) > 0 and int(pesel[2:4]) < 13 or int(pesel[2:4]) > 20 and int(pesel[2:4]) < 33 or int(pesel[2:4]) > 40 and int(pesel[2:4]) < 53 or int(pesel[2:4]) > 60 and int(pesel[2:4]) < 73 or int(pesel[2:4]) > 80 and int(pesel[2:4]) < 93):
+                return True
+            else:
+                return False
+        else:
+            return False
+    else:
+        return False
 def validate_regon(regon):
     return regon
 def generate_password():
