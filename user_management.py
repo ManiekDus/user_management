@@ -18,8 +18,7 @@ def edit_user(user_id, updated_data):
             nip = validate_nip(updated_data[1])
             pesel = validate_pesel(updated_data[2])
             regon = validate_regon(updated_data[3])
-            index = 1
-            dataToSave = {"userIndex":index,"userName": userName, "NIP": nip, "PESEL": pesel, "REGON":regon, "password": generate_password(), "status": True}
+            dataToSave = {"userIndex":user_id,"userName": userName, "NIP": nip, "PESEL": pesel, "REGON":regon, "password": generate_password(), "status": True}
             data[user_id-1] = dataToSave
         with open("./data/users.json", mode="w+", encoding='utf-8') as out_file:
             json.dump(data, out_file)
@@ -27,7 +26,19 @@ def edit_user(user_id, updated_data):
     else:
         print(f"File not found at {path}, there is no user data to edit.")
 def remove_user(user_id):
-    return 0
+    path = './data/users.json'
+    isExist = os.path.exists(path) 
+    if(isExist): 
+        with open("./data/users.json", mode="r", encoding='utf-8') as out_file:
+            data = json.load(out_file)
+            data = list(data)
+            dataToSave = {"userIndex":user_id,"userName": "Redacted", "NIP": data[user_id-1]["NIP"], "PESEL": data[user_id-1]["PESEL"], "REGON":data[user_id-1]["REGON"], "password": 'None', "status": False}
+            data[user_id-1] = dataToSave
+        with open("./data/users.json", mode="w+", encoding='utf-8') as out_file:
+            json.dump(data, out_file)
+        print(f"Succesfully deleted user data at ID: {user_id}")
+    else:
+        print(f"File not found at {path}, there is no user data to edit.")
 def load_users():
     return 0
 def validate_nip(nip):
