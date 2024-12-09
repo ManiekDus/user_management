@@ -1,14 +1,6 @@
 # user_management
 
-## Nazwy funkcji:
-- `add_user(user_data)`: Dodaje nowego użytkownika.
-- `remove_user(user_id)`: Usuwa istniejącego użytkownika.
-- `edit_user(user_id, updated_data)`: Edytuje dane użytkownika.
-- `validate_nip(nip)`: Waliduje numer NIP.
-- `validate_pesel(pesel)`: Waliduje numer PESEL.
-- `validate_regon(regon)`: Waliduje numer REGON.
-- `generate_password()`: Generuje silne hasło.
-- `validate_password(password)`: Waliduje siłę hasła.
+## Funkcje:
 
 - ### Funkcja `add_user(user_data)`
 - Funkcja, która dodaje nowego użytkownika do pliku `users.json`.
